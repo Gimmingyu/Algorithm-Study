@@ -20,6 +20,5 @@ while start >= end:
         end = mid + 1
     else:
         start = mid - 1
-# 같다 조건만 다르게 했는데 하나는 틀렸습니다, 하나는 정답처리 됨
-# mid 로 자르는데 목표 높이를 달성했다면 바로 끝내면 된다고 생각했는데, 어떤 예외가 있는지 모르겠다.
+
 print(start)

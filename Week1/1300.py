@@ -1,8 +1,9 @@
+# K번째 수
+
 import sys
 
 n = int(sys.stdin.readline())
 k = int(sys.stdin.readline())
-
 
 start = 1
 end = k

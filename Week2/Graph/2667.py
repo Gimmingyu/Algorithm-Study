@@ -23,7 +23,6 @@ def solution(idx, c):
     table[idx] = c
     for node in linked_node[idx]:
         if table[node] == '1':
-            table[node] = str(c)
             solution(node, c)
 
 

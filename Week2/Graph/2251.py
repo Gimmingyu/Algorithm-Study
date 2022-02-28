@@ -43,7 +43,7 @@ answer = []
 q = deque()
 q.append((0, 0))
 
-is_visited = [[False] * (b + 1) for t in range(a + 1)]
+is_visited = [[False] * 201 for t in range(201)]
 is_visited[0][0] = True
 
 bfs()

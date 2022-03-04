@@ -22,28 +22,30 @@ for i in range(n - 1):
 # 2. 수가 짝수면 선이 진다. 홀수이면 선이 이긴다.
 root = 1
 
-print(f"tree = {tree}")
 
-
-def dfs(node):
+def dfs(node, dep):
     global tree, parent, answer
+    # 연결 노드 리스트의 길이가 1이라면 리프노드에 해당하므로
+    if len(tree[node]) == 1 and node != root:
+        answer += dep
+        return
     # 현재 노드와 연결된 노드를 탐색
     for j in tree[node]:
+        # 1은 부모노드를 저장해줄 필요가 없으므로 continue
         if j == root:
             continue
-        # 부모노드를 저장해준다.
+        # 부모노드가 없다면 현재 노드로 저장해준다.
         if not parent[j]:
             parent[j] = node
-            dfs(j)
+            # 깊이를 1 증가시키면서 연결된 노드를 살핀다.
+            dfs(j, dep + 1)
 
 
-if n == 2:
-    print("Yes")
+sys.setrecursionlimit(10**5)
+dfs(1, 0)
+
+if answer % 2 == 0:
+    print("No")
 else:
-    dfs(1)
-    if answer % 2 == 0:
-        print("No")
-    else:
-        print("Yes")
+    print("Yes")
 
-print(f"answer = {answer}")

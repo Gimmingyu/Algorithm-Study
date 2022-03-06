@@ -27,7 +27,7 @@ for i in range(1, n + 1):
     # 건설시간 입력
     build_time[i] += line[0]
     for j in line[1:-1]:
-        # 선행건물에 후행건물 입력
+        # 부모노드에 자식노드 추가
         graph[j].append(i)
         # 진입차수 증가
         entry[i] += 1
@@ -40,7 +40,7 @@ for t in range(1, n + 1):
 
 while q:
     now = q.popleft()
-    # 후행건물들
+    # 자식노드들
     for b in graph[now]:
         # 진입차수 감소
         entry[b] -= 1

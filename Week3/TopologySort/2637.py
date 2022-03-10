@@ -28,16 +28,11 @@ for k in range(1, n + 1):
 while q:
     now = q.popleft()
     for nxt, weight in graph[now]:
-        # 기본부품이라면
-        if sum(needs[now]) == 0:
-            # 자식노드에 필요한 가중치만큼 더해준다.
-            needs[nxt][now] += weight
         # 중간부품 혹은 완제품 이라면
-        else:
-            # 현재 제품을 만드는데 필요했던 부품들 * 해당 중간부품이 필요로 하는 현재 제품의 개수
-            for w in range(1, n + 1):
-                needs[nxt][w] += needs[now][w] * weight
-        # 진입차수는 하나 줄여준다.
+        # 현재 제품을 만드는데 필요했던 부품들 * 해당 중간부품이 필요로 하는 현재 제품의 개수
+        for w in range(1, n + 1):
+            needs[nxt][w] += needs[now][w] * weight
+        # 진입차수 줄여준다.
         entry[nxt] -= weight
         # 0이되면 넣어준다.
         if entry[nxt] == 0:

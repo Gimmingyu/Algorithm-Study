@@ -26,10 +26,10 @@ answer = [0] * (n + 1)
 
 # 1과 연결된 노드부터 보기 때문에 너비우선탐색.
 def bfs(q):
-    global now, answer
+    global answer
     # 큐를 돌면서
     while q:
-        # 노드를 하나씩 꺼낸다. 처음은 1
+        # 노드를 하나씩 꺼낸다.
         node = q.popleft()
         # 1과 연결된 노드들을 보면서
         for num in graph[node]:
@@ -37,7 +37,7 @@ def bfs(q):
             if not answer[num]:
                 answer[num] = node
                 q.append(num)
-                # 이제 num과 연결된 노드들의 부모를 찾는다.
+                # num과 연결된 노드들의 부모를 찾는다.
 
     for ans in answer[2:]:
         yield ans

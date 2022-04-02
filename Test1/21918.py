@@ -48,4 +48,5 @@ for i in range(m):
     a, b, c = map(int, si().split())
     command(a, b, c)
 
-print(arr[1:])
+for ans in arr:
+    print(arr)

@@ -1,52 +1,67 @@
 import sys
-from collections import deque
-from heapq import heappush, heappop, heapify
+from heapq import heappush, heappop
+from math import inf
+
 si = sys.stdin.readline
+
+
 def MIIS(): return map(int, si().split())
 
 
 n, m = MIIS()
 
-graph = [[0] * (n + 1) for _ in range(n + 1)]
+graph = [[inf] * (n + 1) for _ in range(n + 1)]
+for a in range(1, n + 1):
+    for b in range(1, n + 1):
+        if a == b:
+            graph[a][b] = 0
+
 for _ in range(m):
-    b1, b2, dist = MIIS()
-    graph[b1][b2] = dist
+    s, e, d = MIIS()
+    graph[s][e] = d
 
 k = int(si())
 friends = list(MIIS())
-# 친구들의 도시를 넣고 친구가 사는 도시에서 가장 가까운 곳부터 선택.
-# 돌아오는 길이 있는 경우와 없는 경우
-# 모든 도시를 방문할 때까지 heapq로 꺼낸다
-# 모든 도시까지의 왕복시간 최대값중 최소값을 찾는다.
-# 친구들이 사는 곳 부터 모든 도시까지의 최단거리(왕복시간)를 너비탐색으로 계산.
-# 도시별 왕복시간의 최대값중 최소값을 뽑는다.
 
-
-def bfs(start):
-    # heapq
-    q = []
-    # 출발 도시에서 각 도시까지의 최단거리를 저장할 테이블
-    table = [0] * (n + 1)
-    # 방문 리스트
-    visited = set()
-    visited.add(start)
-    # 친구들이 사는 도시와 연결된 도시를 큐에 넣는다.
+# j에서 k까지 가는 시간과 i를 경유해서 가는 시간을 비교해서
+for i in range(1, n + 1):
     for j in range(1, n + 1):
-        if graph[start][j]:
-			table[j] += graph[start][j]
-            heappush(q, (graph[i][j], start, j))
+        for k in range(1, n + 1):
+            graph[j][k] = min(graph[j][k], graph[j][i] + graph[i][k])
 
-    while q:
-        # 출발지에서 가장 가까운 도시.
-        dist, b1, b2 = heappop(q)
-        # b2를 방문처리 한다.
-        if b2 not in visited:
-            visited.add(b2)
-            # b2까지의 거리를 넣어준다.
-            table[b2] += table[b1] + dist
+# def solution(s):
+#     global graph
+#     q = []
+#     distance = [0] * (n + 1)
+#     visited = set()
+#     visited.add(s)
+#     for j in range(1, n + 1):
+#         if graph[s][j]:
+#             heappush(q, (graph[i][j], s, j))
+#     while q:
+#         dist, b1, b2 = heappop(q)
+#         if b2 not in visited:
+#             visited.add(b2)
+#             distance[b2] += distance[b1] + dist
+#             for nxt in range(1, n + 1):
+#                 if graph[b2][nxt] and nxt not in visited:
+#                     heappush(q, (graph[b2][nxt], b2, nxt))
+#     return distance
 
-    return table
+# for i in friends:
+#     print(solution(i))
+answer = [0]
+for o in range(1, n + 1):
+    _max = -inf
+    for f in friends:
+        # 친구집이 도착지와 같으면 0이니까 패스, 친구집에서 도착지 혹은 그 반대가 경로가 없으면 패스
+        if f != o and graph[f][o] != inf and graph[o][f] != inf:
+            # 각 친구 집에서 목적지까지의 왕복시간이 현재 최대값보다 크면 갱신
+            if _max < graph[f][o] + graph[o][f]:
+                _max = graph[f][o] + graph[o][f]
+    answer.append(_max)
 
-
-for i in friends:
-    t = dfs(i)
+_min = min(answer[1:])
+for ans in range(1, n + 1):
+    if answer[ans] == _min:
+        print(ans, end=" ")

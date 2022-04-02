@@ -29,27 +29,6 @@ for i in range(1, n + 1):
         for k in range(1, n + 1):
             graph[j][k] = min(graph[j][k], graph[j][i] + graph[i][k])
 
-# def solution(s):
-#     global graph
-#     q = []
-#     distance = [0] * (n + 1)
-#     visited = set()
-#     visited.add(s)
-#     for j in range(1, n + 1):
-#         if graph[s][j]:
-#             heappush(q, (graph[i][j], s, j))
-#     while q:
-#         dist, b1, b2 = heappop(q)
-#         if b2 not in visited:
-#             visited.add(b2)
-#             distance[b2] += distance[b1] + dist
-#             for nxt in range(1, n + 1):
-#                 if graph[b2][nxt] and nxt not in visited:
-#                     heappush(q, (graph[b2][nxt], b2, nxt))
-#     return distance
-
-# for i in friends:
-#     print(solution(i))
 answer = [0]
 for o in range(1, n + 1):
     _max = -inf

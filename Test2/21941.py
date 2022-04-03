@@ -5,6 +5,7 @@ from math import inf
 si = sys.stdin.readline
 sys.setrecursionlimit(10**8)
 
+
 def MSIS():
     return map(str, si().split())
 
@@ -24,6 +25,7 @@ def solution(start):
     # 문자열 s의 길이를 초과하면 얻는 점수 0
     if start >= len(s):
         return 0
+    # 이미 갱신된 적이 있다면 리턴해준다.
     if score[start] != -1:
         return score[start]
     # start번째의 점수는 start + 1번째의 함수가 가질 수 있는 점수 + start번째를 삭제하는 점수

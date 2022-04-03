@@ -8,6 +8,7 @@ def MIIS(): return map(int, si().split())
 
 n = int(si())
 
+# recommend 용
 min_heap = []
 max_heap = []
 ret = []

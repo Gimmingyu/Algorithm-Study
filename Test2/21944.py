@@ -1,112 +1,243 @@
 import sys
 from collections import defaultdict
-from heapq import heappop, heappush
+from heapq import heappop, heappush, merge
 
 si = sys.stdin.readline
 
 
-def MIIS(): return map(int, si().split())
-def MSIS(): return map(str, si().split())
+def miis(): return map(int, si().split())
 
 
-max_heap = []
-min_heap = []
-# recommend3 용
-minmax_heap = []
-maxmin_heap = []
-ret = []
-visited = defaultdict()
+def msis(): return map(str, si().split())
+
+
+class Group:
+    group_set = set()
+
+    def __init__(self, prob: int):
+        self.prob = prob
+        self.min_heap = []
+        self.max_heap = []
+
+    @classmethod
+    def del_set(cls, prob: int):
+        cls.group_set.discard(prob)
+
+    def solve(self, prob: int):
+        sub_minheap = []
+        sub_maxheap = []
+        while self.min_heap and self.min_heap[0][1] != prob:
+            heappush(sub_minheap, heappop(self.min_heap))
+        if self.min_heap and self.min_heap[0][1] == prob:
+            heappop(self.min_heap)
+        while self.max_heap and -self.max_heap[0][1] != prob:
+            heappush(sub_maxheap, heappop(self.max_heap))
+        if self.max_heap and -self.max_heap[0][1] == prob:
+            heappop(self.max_heap)
+        self.min_heap = list(merge(sub_minheap, self.min_heap))
+        self.max_heap = list(merge(sub_maxheap, self.max_heap))
+
+    def self_heappop(self):
+        while self.min_heap and (not not_solved.get(self.min_heap[0][1]) or self.min_heap[0][1] not in self.group_set):
+            heappop(self.min_heap)
+        while self.max_heap and (not not_solved.get(-self.max_heap[0][1]) or -self.max_heap[0][1] not in self.group_set):
+            heappop(self.max_heap)
+
+    def self_heappush(self, prob: int, difficulty: int):
+        self.self_heappop()
+        heappush(self.min_heap, (difficulty, prob))
+        heappush(self.max_heap, (-difficulty, -prob))
+        self.group_set.add(prob)
+
+    def recommend1(self, X: int):
+        self.self_heappop()
+        if X == 1:
+            if self.max_heap:
+                return -self.max_heap[0][1]
+            return False
+        if self.min_heap:
+            return self.min_heap[0][1]
+        return False
+
+
+class Difficulty:
+    difficult_set = set()
+
+    def __init__(self, difficulty: int):
+        self.difficulty = difficulty
+        self.min_heap = []
+        self.max_heap = []
+
+    @classmethod
+    def del_set(cls, prob: int):
+        cls.difficult_set.discard(prob)
+
+    def solve(self, prob: int):
+        sub_maxheap = []
+        sub_minheap = []
+        while self.min_heap and self.min_heap[0] != prob:
+            heappush(sub_minheap, heappop(self.min_heap))
+        if self.min_heap and self.min_heap[0] == prob:
+            heappop(self.min_heap)
+        while self.max_heap and -self.max_heap[0] != prob:
+            heappush(sub_maxheap, heappop(self.max_heap))
+        if self.max_heap and -self.max_heap[0] == prob:
+            heappop(self.max_heap)
+        self.min_heap = list(merge(sub_minheap, self.min_heap))
+        self.max_heap = list(merge(sub_maxheap, self.max_heap))
+
+    def self_heappop(self):
+        while self.max_heap and (not not_solved.get(-self.max_heap[0]) or -self.max_heap[0] not in self.difficult_set):
+            heappop(self.max_heap)
+        while self.min_heap and (not not_solved.get(self.min_heap[0]) or self.min_heap[0] not in self.difficult_set):
+            heappop(self.min_heap)
+
+    def self_heappush(self, prob: int):
+        self.self_heappop()
+        heappush(self.min_heap, prob)
+        heappush(self.max_heap, -prob)
+        self.difficult_set.add(prob)
+
+    def recommend3(self, X: int):
+        self.self_heappop()
+        if X == -1:
+            if self.max_heap:
+                return -self.max_heap[0]
+            return False
+        if self.min_heap:
+            return self.min_heap[0]
+        return False
+
+
+class Problem:
+    max_heap = []
+    min_heap = []
+
+    def __init__(self, level, group):
+        self.level = level
+        self.group = group
+
+    @classmethod
+    def solve(cls, prob: int):
+        sub_minheap = []
+        sub_maxheap = []
+        while cls.max_heap and -cls.max_heap[0][1] != prob:
+            heappush(sub_maxheap, heappop(cls.max_heap))
+        if cls.max_heap and -cls.max_heap[0][1] == prob:
+            heappop(cls.max_heap)
+        cls.max_heap = list(merge(cls.max_heap, sub_maxheap))
+        while cls.min_heap and cls.min_heap[0][1] != prob:
+            heappush(sub_minheap, heappop(cls.min_heap))
+        if cls.min_heap and cls.min_heap[0][1] == prob:
+            heappop(cls.min_heap)
+        cls.min_heap = list(merge(cls.min_heap, sub_minheap))
+
+    @classmethod
+    def self_heappop(cls):
+        while cls.max_heap and not not_solved.get(-cls.max_heap[0][1]):
+            heappop(cls.max_heap)
+        while cls.min_heap and not not_solved.get(cls.min_heap[0][1]):
+            heappop(cls.min_heap)
+
+    @classmethod
+    def self_heappush(cls, prob: int, group: int, level: int):
+        cls.self_heappop()
+        heappush(cls.min_heap, (level, prob, group))
+        heappush(cls.max_heap, (-level, -prob, group))
+
+    @classmethod
+    def recommend2(cls, X: int):
+        cls.self_heappop()
+        if X == 1:
+            if cls.max_heap:
+                return -cls.max_heap[0][1]
+            return False
+        if cls.min_heap:
+            return cls.min_heap[0][1]
+        return False
+
+
+g_dict = defaultdict()
+d_dict = defaultdict()
+p_dict = defaultdict()
+not_solved = defaultdict()
+answer = []
 n = int(si())
 for _ in range(n):
-    prob, level, group = MIIS()
-    heappush(max_heap, (-level, -prob, group))
-    heappush(min_heap, (level, prob, group))
-    heappush(maxmin_heap, (-level, prob, group))
-    heappush(minmax_heap, (level, -prob, group))
-    visited[prob] = False
+    problem, level, group = miis()
+    try:
+        g_dict[group].self_heappush(prob=problem, difficulty=level)
+    except KeyError:
+        g_dict[group] = Group(prob=group)
+        g_dict[group].self_heappush(prob=problem, difficulty=level)
+    try:
+        d_dict[level].self_heappush(prob=problem)
+    except KeyError:
+        d_dict[level] = Difficulty(difficulty=level)
+        d_dict[level].self_heappush(prob=problem)
+    try:
+        p_dict[problem].self_heappush(level=level, group=group)
+    except KeyError:
+        p_dict[problem] = Problem(level=level, group=group)
+        p_dict[problem].self_heappush(prob=problem, level=level, group=group)
+    not_solved[problem] = True
+
 m = int(si())
 for _ in range(m):
     line = si().split()
-    # print(f"command = {line}")
-    if line[0] == 'recommend':
-        temp = []
-        if line[2] == '1':
-            while max_heap and visited[-(max_heap[0][1])]:
-                heappop(max_heap)
-            while max_heap and max_heap[0][2] != int(line[1]):
-                temp.append(heappop(max_heap))
-            if max_heap:
-                ret.append(-max_heap[0][1])
-            else:
-                ret.append(-1)
-            while temp:
-                heappush(max_heap, temp.pop())
-        else:
-            while min_heap and visited[min_heap[0][1]]:
-                heappop(min_heap)
-            while min_heap and min_heap[0][2] != int(line[1]):
-                temp.append(heappop(min_heap))
-            if min_heap:
-                ret.append(min_heap[0][1])
-            else:
-                ret.append(-1)
-            while temp:
-                heappush(min_heap, temp.pop())
-    elif line[0] == 'recommend2':
-        if line[1] == '1':
-            while visited[-(max_heap[0][1])]:
-                heappop(max_heap)
-            ret.append(-max_heap[0][1])
-        else:
-            while visited[min_heap[0][1]]:
-                heappop(min_heap)
-            ret.append(min_heap[0][1])
-    elif line[0] == 'recommend3':
-        temp = []
-        if line[1] == '1':
-            # 난이도 l보다 크거나 같은 문제 중 가장 쉬운 문제, 문제 번호가 작은 순
-            # -level, prob, g
-            while visited[maxmin_heap[0][1]]:
-                heappop(maxmin_heap)
-            while maxmin_heap and -(maxmin_heap[0][0]) >= int(line[2]):
-                temp.append(heappop(maxmin_heap))
-            if temp:
-                ret.append(temp[-1][1])
-            else:
-                ret.append(-1)
-            while temp:
-                heappush(maxmin_heap, temp.pop())
-        else:
-            # 난이도 l보다 작은 문제 중 가장 어려운 문제, 문제 번호가 큰 순
-            # level, -prob, g
-            while visited[-(minmax_heap[0][1])]:
-                heappop(minmax_heap)
-            while minmax_heap and minmax_heap[0][0] < int(line[2]):
-                temp.append(heappop(minmax_heap))
-            if temp:
-                ret.append(-(temp[-1][1]))
-            else:
-                ret.append(-1)
-            while temp:
-                heappush(minmax_heap, temp.pop())
-    elif line[0] == 'solved':
-        visited[int(line[1])] = True
-    else:
-        p, l, g = map(int, line[1:])
-        while visited[min_heap[0][1]]:
-            heappop(min_heap)
-        while visited[-max_heap[0][1]]:
-            heappop(max_heap)
-        while visited[maxmin_heap[0][1]]:
-            heappop(maxmin_heap)
-        while visited[-minmax_heap[0][1]]:
-            heappop(minmax_heap)
-        heappush(min_heap, (l, p, g))
-        heappush(max_heap, (-l, -p, g))
-        heappush(minmax_heap, (l, -p, g))
-        heappush(maxmin_heap, (-l, p, g))
-        visited[p] = False
-    # print(f"ret = {ret}")
+    if line[0] == 'solved':
+        p = int(line[1])
+        del not_solved[p]
+        lv, g = p_dict[p].level, p_dict[p].group
+        d_dict[lv].del_set(prob=p)
+        g_dict[g].del_set(prob=p)
+        d_dict[lv].solve(prob=p)
+        g_dict[g].solve(prob=p)
+        del p_dict[p]
 
-for r in ret:
-    print(r, end=" ")
+    elif line[0] == 'add':
+        p, lv, g = map(int, line[1:])
+        if p_dict.get(p):
+            p_dict[p].solve(prob=p)
+        try:
+            d_dict[lv].self_heappush(prob=p)
+        except KeyError:
+            d_dict[lv] = Difficulty(difficulty=p)
+            d_dict[lv].self_heappush(prob=p)
+        try:
+            g_dict[g].self_heappush(prob=p, difficulty=lv)
+        except KeyError:
+            g_dict[g] = Group(prob=p)
+            g_dict[g].self_heappush(prob=p, difficulty=lv)
+        try:
+            p_dict[p].self_heappush(prob=p, level=lv, group=g)
+        except KeyError:
+            p_dict[p] = Problem(level=lv, group=g)
+            p_dict[p].self_heappush(prob=p, group=g, level=lv)
+        not_solved[p] = True
+
+    else:
+        ret = -1
+        if line[0] == 'recommend':
+            g, x = map(int, line[1:])
+            ret = g_dict[g].recommend1(X=x)
+
+        elif line[0] == 'recommend2':
+            x = int(line[1])
+            ret = Problem.recommend2(X=x)
+        else:
+            x, lv = map(int, line[1:])
+            if x == -1:
+                lv += x
+            while 0 < lv <= 100:
+                if d_dict.get(lv):
+                    ret = d_dict[lv].recommend3(X=x)
+                    if ret:
+                        break
+                lv += x
+        if not ret:
+            ret = -1
+        answer.append(ret)
+
+for ans in answer:
+    print(ans)

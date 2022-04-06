@@ -50,8 +50,8 @@ def dfs(arr, count, now):
             # print(f"temp_sum = {multiple_to}")
             # 복사한 리스트, 덩어리 하나 선택, 현재 곱셈한 결과 보냄
             dfs(temp, count - 1, now * multiple_to)
-    return answer
+    return
 
 
-answer = dfs(lst, q, 1)
+dfs(lst, q, 1)
 print(answer)

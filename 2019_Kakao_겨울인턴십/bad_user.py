@@ -1,4 +1,3 @@
-
 user_id1, banned_id1 = ["frodo", "fradi", "crodo",
                         "abc123", "frodoc"], ["fr*d*", "abc1**"]
 user_id2, banned_id2 = ["frodo", "fradi", "crodo",
@@ -6,11 +5,19 @@ user_id2, banned_id2 = ["frodo", "fradi", "crodo",
 user_id3, banned_id3 = ["frodo", "fradi", "crodo",
                         "abc123", "frodoc"], ["fr*d*", "*rodo", "******", "******"]
 
+from itertools import product
 
 def solution(user_id, banned_id):
+    def permutations(array, r):
+        for i in range(len(array)):
+            if r == 1:
+                yield [array[i]]
+            else:
+                for NEXT in permutations(array[:i] + array[i + 1:], r - 1):
+                    yield [array[i]] + NEXT
 
-    idx = [[i for i in range(len(id)) if id[i] == '*']
-           for id in banned_id]
+    idx = [[i for i in range(len(d)) if d[i] == '*']
+           for d in banned_id]
 
     table = [[] for _ in range(len(banned_id))]
     for uid in user_id:
@@ -22,24 +29,12 @@ def solution(user_id, banned_id):
                 if compare.decode() == banned_id[bid]:
                     table[bid].append(uid)
 
-    answer = 0
+    a = list(product(*table))
     s_list = []
-    for i in table[0]:
-        s = set()
-        s.add(i)
-        if not table[0]:
-            return 0
-        for j in range(1, len(table)):
-            if not table[j]:
-                return 0
-            for k in range(len(table[j])):
-                if table[j][k] in s:
-                    continue
-                else:
-                    s.add(table[j][k])
-                    break
-        if s not in s_list:
-            s_list.append(s)
+    for i in a:
+        b = set(i)
+        if b not in s_list and len(b) == len(table):
+            s_list.append(b)
     return s_list
 
 
